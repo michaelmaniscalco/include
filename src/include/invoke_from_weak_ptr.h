@@ -4,6 +4,9 @@
 #include <memory>
 #include <optional>
 
+// TODO: deprecate.  
+// this came in handy when it was written but can now be replaced with:
+// if (auto sp = wp.lock(); sp) sp->func(args ...);
 
 namespace maniscalco
 {
