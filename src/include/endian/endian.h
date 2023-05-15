@@ -70,16 +70,6 @@ namespace maniscalco
 
         underlying_type get() const;
 
-        auto operator <=> 
-        (
-            endian const &
-        ) const;
-
-        auto operator <=> 
-        (
-            underlying_type
-        ) const;
-
     private:
 
         underlying_type  value_;
@@ -219,22 +209,37 @@ static std::ostream & operator <<
 
 
 //=============================================================================
-template <maniscalco::endian_concept T>
-auto maniscalco::endian<data_type, endian_type>::operator <=> 
+static auto operator <=> 
 (
-    endian const & other
-) const
+    maniscalco::endian_concept auto const & first,
+    maniscalco::endian_concept auto const & second
+)
 {
-    return (get() <=> other.get());
+    return (first.get() <=> second.get());
 }
 
 
 //=============================================================================
-template <maniscalco::endian_concept T>
-auto maniscalco::endian<data_type, endian_type>::operator <=> 
+template <typename T>
+requires (!maniscalco::endian_concept<T>)
+static auto operator <=> 
 (
-    underlying_type other
-) const
+    maniscalco::endian_concept auto const & first,
+    T const & second
+)
 {
-    return (get() <=> other);
+    return (first.get() <=> second);
+}
+
+
+//=============================================================================
+template <typename T>
+requires (!maniscalco::endian_concept<T>)
+static auto operator <=> 
+(
+    T const & first,
+    maniscalco::endian_concept auto const & second
+)
+{
+    return (first <=> second.get());
 }
