@@ -32,8 +32,7 @@ namespace maniscalco
         using underlying_type = data_type;
         static auto constexpr type = endian_type;
 
-        template <typename, std::endian>
-        friend class endian;
+        template <typename, std::endian> friend class endian;
 
         endian();
 
@@ -49,7 +48,7 @@ namespace maniscalco
 
         endian
         (
-            underlying_type
+            underlying_type const &
         );
 
         endian & operator =
@@ -64,40 +63,33 @@ namespace maniscalco
 
         endian & operator =
         (
-            underlying_type
+            underlying_type const &
         );
 
         operator underlying_type() const;
 
         underlying_type get() const;
 
-    protected:
+        auto operator <=> 
+        (
+            endian const &
+        ) const;
+
+        auto operator <=> 
+        (
+            underlying_type
+        ) const;
 
     private:
 
         underlying_type  value_;
+    }; // class endian
 
-    };
 
     template <typename data_type> using big_endian = endian<data_type, std::endian::big>;
     template <typename data_type> using little_endian = endian<data_type, std::endian::little>;
     template <typename data_type> using network_order = endian<data_type, std::endian::big>;
     template <typename data_type> using host_order = endian<data_type, std::endian::native>;
-
-    // global operator overloads involving endian types
-    template <typename input_type, typename data_type, std::endian endian_type> inline static bool operator < (input_type a, endian<data_type, endian_type> b){return (a < (data_type)b);}
-    template <typename data_type, std::endian endian_type> inline static bool operator < (endian<data_type, endian_type> a, data_type b){return ((data_type)a < b);}
-    template <typename data_type, std::endian endian_type> inline static bool operator <= (data_type a, endian<data_type, endian_type> b){return (a <= (data_type)b);}
-    template <typename data_type, std::endian endian_type> inline static bool operator <= (endian<data_type, endian_type> a, data_type b){return ((data_type)a <= b);}
-    template <typename data_type, std::endian endian_type> inline static bool operator == (data_type a, endian<data_type, endian_type> b){return (a == (data_type)b);}
-    template <typename data_type, std::endian endian_type> inline static bool operator == (endian<data_type, endian_type> a, data_type b){return ((data_type)a == b);}
-    template <typename data_type, std::endian endian_type> inline static bool operator >= (data_type a, endian<data_type, endian_type> b){return (a >= (data_type)b);}
-    template <typename data_type, std::endian endian_type> inline static bool operator >= (endian<data_type, endian_type> a, data_type b){return ((data_type)a >= b);}
-    template <typename data_type, std::endian endian_type> inline static bool operator > (data_type a, endian<data_type, endian_type> b){return (a > (data_type)b);}
-    template <typename data_type, std::endian endian_type> inline static bool operator > (endian<data_type, endian_type> a, data_type b){return ((data_type)a > b);}
-    template <typename data_type, std::endian endian_type> inline static bool operator != (data_type a, endian<data_type, endian_type> b){return (a != (data_type)b);}
-    template <typename data_type, std::endian endian_type> inline static bool operator != (endian<data_type, endian_type> a, data_type b){return ((data_type)a != b);}
-
 
     template <typename T>
     concept endian_concept = std::is_same_v<T, endian<typename T::underlying_type, T::type>>;
@@ -112,7 +104,7 @@ namespace maniscalco
         return to_string(source.get());
     }
 
-}
+} // namespace maniscalco
 
 
 //==============================================================================
@@ -151,7 +143,7 @@ maniscalco::endian<data_type, endian_type>::endian
 template <typename data_type, std::endian endian_type>
 maniscalco::endian<data_type, endian_type>::endian
 (
-    data_type input
+    data_type const & input
 ):
     value_(endian_swap<std::endian::native, endian_type>(input))
 {
@@ -186,7 +178,7 @@ auto maniscalco::endian<data_type, endian_type>::operator =
 template <typename data_type, std::endian endian_type>
 auto maniscalco::endian<data_type, endian_type>::operator =
 (
-    data_type input
+    data_type const & input
 ) -> endian &
 {
     value_ = endian_swap<std::endian::native, endian_type>(input);
@@ -223,4 +215,26 @@ static std::ostream & operator <<
 )
 {
     return stream << source.get();
+}
+
+
+//=============================================================================
+template <maniscalco::endian_concept T>
+auto maniscalco::endian<data_type, endian_type>::operator <=> 
+(
+    endian const & other
+) const
+{
+    return (get() <=> other.get());
+}
+
+
+//=============================================================================
+template <maniscalco::endian_concept T>
+auto maniscalco::endian<data_type, endian_type>::operator <=> 
+(
+    underlying_type other
+) const
+{
+    return (get() <=> other);
 }

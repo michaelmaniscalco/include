@@ -10,6 +10,7 @@
 namespace maniscalco
 {
 
+
     template <std::size_t N>
     struct constexpr_string
     {
@@ -31,18 +32,6 @@ namespace maniscalco
 
         constexpr operator std::string_view const() const noexcept;
 
-        template <std::size_t other_size>
-        bool operator ==
-        (
-            constexpr_string<other_size> const &
-        ) const noexcept;
-
-        template <std::size_t other_size>
-        bool operator <
-        (
-            constexpr_string<other_size> const &
-        ) const noexcept;
-
         value_type value_;
     };
 
@@ -53,10 +42,9 @@ namespace maniscalco
 
 
     //=========================================================================
-    template <constexpr_string_concept S>
     static constexpr std::string_view const to_string
     (
-        S const & source
+        constexpr_string_concept auto const & source
     ) noexcept
     {
         return source;
@@ -96,24 +84,22 @@ constexpr maniscalco::constexpr_string<N>::operator std::string_view const
 
 
 //=============================================================================
-template <std::size_t N>
-template <std::size_t other_size>
-bool maniscalco::constexpr_string<N>::operator ==
+static constexpr auto operator <=>
 (
-    constexpr_string<other_size> const & other
-) const noexcept
+    constexpr_string_concept auto const & first,
+    constexpr_string_concept auto const & second
+) noexcept
 {
-    return (std::string_view(value_) == std::string_view(other.value_));
+    return (std::string_view(first) <=> std::string_view(other.second));
 }
 
 
 //=============================================================================
-template <std::size_t N>
-template <std::size_t other_size>
-bool maniscalco::constexpr_string<N>::operator <
+static constexpr auto operator ==
 (
-    constexpr_string<other_size> const & other
-) const noexcept
+    constexpr_string_concept auto const & first,
+    constexpr_string_concept auto const & second
+) noexcept
 {
-    return (std::string_view(value_) < std::string_view(other.value_));
+    return (std::string_view(first) == std::string_view(other.second));
 }
