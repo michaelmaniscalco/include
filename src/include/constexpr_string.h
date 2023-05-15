@@ -86,20 +86,20 @@ constexpr maniscalco::constexpr_string<N>::operator std::string_view const
 //=============================================================================
 static constexpr auto operator <=>
 (
-    constexpr_string_concept auto const & first,
-    constexpr_string_concept auto const & second
+    maniscalco::constexpr_string_concept auto const & first,
+    maniscalco::constexpr_string_concept auto const & second
 ) noexcept
 {
-    return (std::string_view(first) <=> std::string_view(other.second));
+    return (std::string_view(first) <=> std::string_view(second));
 }
 
 
 //=============================================================================
 static constexpr auto operator ==
 (
-    constexpr_string_concept auto const & first,
-    constexpr_string_concept auto const & second
+    maniscalco::constexpr_string_concept auto const & first,
+    maniscalco::constexpr_string_concept auto const & second
 ) noexcept
 {
-    return (std::string_view(first) == std::string_view(other.second));
+    return (std::string_view(first) == std::string_view(second));
 }
