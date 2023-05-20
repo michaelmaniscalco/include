@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16.3)
 set(CMAKE_CXX_STANDARD 20)
 
-set(PROJECT_NAME common)
+set(PROJECT_NAME include)
 project(${PROJECT_NAME})
 
 add_subdirectory(src)
